@@ -8,3 +8,10 @@
 
 
 [📄 View Final Report](https://mananaml.github.io/Final_report.pdf)
+
+
+[📄 View Final Report](https://mananaml.github.io/docs/Final_report.pdf)
+
+[📄 View Final Report](https://mananaml.github.io/files/Final_report.pdf)
+
+[📄 View Final Report](https://mananaml.github.io/Files/Final_report.pdf)
