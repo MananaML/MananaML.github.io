@@ -162,6 +162,7 @@ all_trips_v2 %>%
   geom_col(position = "dodge") + 
   labs(title = "Number Of Rides by Rider Type", x = "Weekday", y = "Number of rides")
 ```
+![My ggplot](1.png)
 
 ```{r average duration by rider type, echo=FALSE, message=FALSE, warning=FALSE}
 summary_data <- all_trips_v2 %>% 
@@ -179,6 +180,7 @@ ggplot(summary_data, aes(x = weekday, y = average_duration, fill = member_casual
             ,color = "black", size = 3.0) +
   labs(title = "Average Duration by Rider Type", x = "Weekday", y = "Average duration")
 ```
+![My ggplot](2.png)
 
 
 #### Findings
