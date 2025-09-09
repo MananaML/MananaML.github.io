@@ -1,6 +1,6 @@
-title: "Case study analysis"
-author: "Manana Mokgoera"
-date: 07-09-2025
+#### Title: "Case study analysis"
+#### Author: "Manana Mokgoera"
+#### Date: 07-09-2025
 
 # How do annual members and casual riders use Cyclistic bikes differently?
 
