@@ -48,6 +48,7 @@ The data was downloaded, renamed the columns to make them consistent and inspect
 ```{r compared each file, echo=TRUE, results='hide'}
 colnames(q1_2019)
 colnames(q1_2020)
+
 (q1_2019 <- rename(q1_2019, ride_id = trip_id
                    ,rideable_type = bikeid
                    ,started_at = start_time
@@ -57,6 +58,7 @@ colnames(q1_2020)
                    ,end_station_name = to_station_name
                    ,end_station_id = to_station_id
                    ,member_casual = usertype))
+
 str(q1_2019)
 str(q1_2020)
 ```
@@ -66,9 +68,12 @@ Cleaned and combined the data into a single file:
 ```{r converting ride_id and rideable_type to character, results='hide'}
 q1_2019 <- mutate(q1_2019, ride_id=as.character(ride_id)
                   ,rideable_type=as.character(rideable_type))
+
 all_trips <- bind_rows(q1_2019, q1_2020)
+
 all_trips <- all_trips %>% 
   select(-c(start_lat, start_lng, end_lat, end_lng, birthyear, gender,  "tripduration"))
+
 colnames(all_trips)
 nrow(all_trips) #rows in the data frame
 dim(all_trips) #dimensions of the data frame
@@ -76,10 +81,12 @@ head(all_trips)
 tail(all_trips)
 str(all_trips)
 summary(all_trips)
+
 all_trips <-  all_trips %>% 
   mutate(member_casual = recode(member_casual
                                 ,"Subscriber" = "member"
                                 ,"Customer" = "casual"))
+
 table(all_trips$member_casual)
 ```
 
@@ -97,9 +104,13 @@ Preparing data fields in order to perform calculations for ride_lengths (in seco
 
 ```{r echo=TRUE, results='hide'}
 all_trips$ride_length <- difftime(all_trips$ended_at, all_trips$started_at)
+
 str(all_trips)
+
 is.factor(all_trips$ride_length)
+
 all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+
 is.numeric(all_trips$ride_length)
 ```
 
@@ -116,12 +127,16 @@ mean(all_trips_v2$ride_length) #(total ride length / rides)
 median(all_trips_v2$ride_length) #midpoint
 max(all_trips_v2$ride_length) #longest ride
 min(all_trips_v2$ride_length) #shortest ride
+
 summary(all_trips_v2$ride_length)
+
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = median)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = max)
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = min)
+
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+
 all_trips_v2$day_of_week <- ordered(all_trips_v2$day_of_week, levels=c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"))
 ```
 
@@ -129,11 +144,13 @@ Calculation of the ride length of each member by day of the week:
 
 ```{r average ride time by each day for members vs casual riders, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
 aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+
 all_trips_v2 %>% 
   mutate(weekday = wday(started_at, label = TRUE)) %>% 
   group_by(member_casual, weekday) %>% 
   summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>% 
   arrange(member_casual, weekday)
+
 summary_data <- all_trips_v2 %>%
   mutate(weekday = wday(started_at, label = TRUE)) %>%
   group_by(member_casual, weekday) %>%
@@ -143,6 +160,23 @@ summary_data <- all_trips_v2 %>%
 kable(summary_data, caption = "Average duration & ride count by weekday and rider type")
 ```
 
+Average duration table: 
+| Rider type | Weekday | Number of rides | Avearge duration |
+|------------|---------|-----------------|------------------|
+| Casual     | Sun     | 18652           | 5061.3044        |
+| Casual     | Mon     | 5591            | 4752.0504        |
+| Casual     | Tue     | 7311            | 4561.8039        |
+| Casual     | Wed     | 7690            | 4480.3724        |
+| Casual     | Thu     | 7147            | 8451.6669        |
+| Casual     | Fri     | 8013            | 6090.7373        |
+| Casual     | Sat     | 13473           | 4950.7708        |
+| Member     | Sun     | 60197           | 972.9383         |
+| Member     | Mon     | 110430          | 822.3112         |
+| Member     | Tue     | 127974          | 769.4416         |
+| Member     | Wed     | 121902          | 711.9838         |
+| Member     | Thu     | 125228          | 707.2093         |
+| Member     | Fri     | 115168          | 796.7338         |
+| Member     | Sat     | 59413           | 974.0730         |
 
 #### Plots
 
@@ -166,6 +200,7 @@ summary_data <- all_trips_v2 %>%
   group_by(member_casual, weekday) %>% 
   summarise(number_of_rides = n(), average_duration = mean(ride_length)
             , .groups = "drop")
+
 max_labels <- summary_data %>% 
   group_by(member_casual)  %>% 
   filter(average_duration == max(average_duration))
